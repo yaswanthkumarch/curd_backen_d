@@ -1,10 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 10000;
+const port = process.env.PORT || 5000;
+// mongoose.connect(process.env.MONGODB_URI, {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//     })
+//     .then(() => console.log('MongoDB connected'))
+//     .catch(err => console.error('MongoDB connection error:', err));
 
 // Middleware
 app.use(cors({
@@ -12,10 +19,13 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// MongoDB connection
-const dbURI = 'mongodb+srv://yaswanth:yash%40123@cluster0.wdxodrc.mongodb.net/mearnapp?retryWrites=true&w=majority&appName=Cluster0';
+//MongoDB connection
+const dbURI = process.env.MONGODB_URI //'mongodb+srv://yaswanth:yash%40123@cluster0.wdxodrc.mongodb.net/mearnapp?retryWrites=true&w=majority&appName=Cluster0';
 mongoose.connect(dbURI).then(() => {
     console.log('Connected to MongoDB Atlas');
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
 }).catch((error) => {
     console.error('Error connecting to MongoDB Atlas', error);
 });
@@ -67,9 +77,4 @@ app.put('/api/users/:id', async(req, res) => {
     } catch (error) {
         res.status(400).send(error.message);
     }
-});
-
-
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
 });
